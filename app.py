@@ -20,12 +20,13 @@ def upload_file():
     f = request.files['file']
     f.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
     api = ipfsApi.Client('127.0.0.1', 5001)
-    res = api.add(f'static\\uploads\\{f.filename}')
+    res = api.add(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
     return res
 
 @app.route('/find')
 def find():
     return render_template('find.html')
+
 
 @app.route('/find-ipfs', methods = ['POST'])
 def find_to_ipfs():
