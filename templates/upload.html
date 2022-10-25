@@ -13,5 +13,21 @@
         <input type = "file" name = "file" />
         <input type = "submit"/>
     </form> 
+
+    <table class="table">
+        <tr>
+          <th>Name File</th>
+          <th>Hash</th>
+          <th>Date</th>
+        </tr>
+        {% for file in datas %}
+            <tr>
+                <td>{{file.file_name}}</td>
+                <td>{{file.file_hash}}</td>
+                <td>{{file.date}}</td>
+            </tr>
+        {% endfor %}
+      </table>
+    
 </body>
 </html>
