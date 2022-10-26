@@ -18,7 +18,12 @@ Simple website application for storing files in IPFS using flask and posgresql.
 ### How to
 Running website in local steps:
 1. Create database using postgresql with name flask_db
-2. change the app.config['SQLALCHEMY_DATABASE_URI'] value to 'postgresql://{Your User}:{Password User}@localhost/flask_db'
+2. change the app.config['SQLALCHEMY_DATABASE_URI'] value
+
+```sh
+  app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://{Your User}:{Password User}@localhost/flask_db'
+```
+
 3. Run the app.py
 
 ```sh
