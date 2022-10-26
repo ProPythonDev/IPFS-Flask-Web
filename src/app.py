@@ -5,7 +5,7 @@ from sqlalchemy import ForeignKey
 from werkzeug.utils import secure_filename
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date
-import ipfsApi
+import ipfsapi
 import os
 import webbrowser
 
@@ -18,7 +18,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 db = SQLAlchemy(app)
 
-class User(db.Model):
+class User(db.Model): 
   __tablename__='user'
   id=db.Column(db.Integer,primary_key=True)
   name=db.Column(db.String(40))
@@ -55,6 +55,7 @@ def register_submit():
     password = request.form['password']
 
     user = User(name, email, password)
+    db.create_all()
     db.session.add(user)
     db.session.commit()
     return redirect(url_for('login'))
@@ -92,11 +93,10 @@ def logout():
 def upload_file():
     f = request.files['file']
     f.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
-    api = ipfsApi.Client('127.0.0.1', 5001)
+    api = ipfsapi.Client('127.0.0.1', 5001)
     res = api.add(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
     if 'user_id' in session:
       user = UploadFile(session['user_id'], secure_filename(f.filename), date.today(), res['Hash'])
-      db.create_all()
       db.session.add(user)
       db.session.commit()
     return redirect('/')
