@@ -13,7 +13,7 @@ UPLOAD_FOLDER = r'static\uploads'
 
 app = Flask(__name__)
 app.secret_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c2VyLTFTTTRSUTlfLS1IVEpGM0QiLCJpYXQiOjE2NjI5ODc0Nzd9.mCvSd2o2vw5Gs7grkBLkW75dlgVcJ-aiqMzfVUvG-q4'
-app.config['SQLALCHEMY_DATABASE_URI']='postgresql://Asus:admin@localhost/flask_db'
+app.config['SQLALCHEMY_DATABASE_URI']='postgresql://kevin:123456@localhost/flask_db'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 db = SQLAlchemy(app)
@@ -29,6 +29,20 @@ class User(db.Model):
     self.name=name
     self.email=email
     self.password=password
+
+# class UpdateFile(db.Model):
+#   __tablename__='upload'
+#   id=db.Column(db.Integer,primary_key=True)
+#   id_user=db.Column(db.Integer, ForeignKey(User.id))
+#   file_name=db.Column(db.String(120))
+#   date=db.Column(db.Date)
+#   file_hash=db.Column(db.String(120))
+ 
+#   def __init__(self,id_user,file_name,date,file_hash):
+#     self.id_user=id_user
+#     self.file_name=file_name
+#     self.date=date
+#     self.file_hash=file_hash
 
 class UploadFile(db.Model):
   __tablename__='upload'
@@ -55,6 +69,7 @@ def register_submit():
     password = request.form['password']
 
     user = User(name, email, password)
+    # db.create_all()
     db.session.add(user)
     db.session.commit()
     return redirect(url_for('login'))
@@ -96,10 +111,23 @@ def upload_file():
     res = api.add(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
     if 'user_id' in session:
       user = UploadFile(session['user_id'], secure_filename(f.filename), date.today(), res['Hash'])
-      db.create_all()
+      # db.create_all()
       db.session.add(user)
       db.session.commit()
     return redirect('/')
+  
+# @app.route('/action-edit', methods = ['POST'])
+# def update_file():
+#     f = request.files['file']
+#     f.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
+#     api = ipfsApi.Client('127.0.0.1', 5001)
+#     res = api.add(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
+#     if 'user_id' in session:
+#       user = UpdateFile(session['user_id'], secure_filename(f.filename), date.today(), res['Hash'])
+#       # db.create_all()
+#       db.session.add(user)
+#       db.session.commit()
+#     return redirect('/')
 
 @app.route('/find')
 def find():
