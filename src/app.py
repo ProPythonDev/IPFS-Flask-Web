@@ -1,7 +1,7 @@
 from operator import and_
 from flask import Flask
 from flask import render_template, request, redirect, session, url_for, flash
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, desc, asc
 from werkzeug.utils import secure_filename
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date
@@ -37,12 +37,14 @@ class UploadFile(db.Model):
   file_name=db.Column(db.String(120))
   date=db.Column(db.Date)
   file_hash=db.Column(db.String(120))
+  pin_status=db.Column(db.Integer)
  
-  def __init__(self,id_user,file_name,date,file_hash):
+  def __init__(self,id_user,file_name,date,file_hash,pin_status):
     self.id_user=id_user
     self.file_name=file_name
     self.date=date
     self.file_hash=file_hash
+    self.pin_status=pin_status
 
 @app.route('/register')
 def register():
@@ -80,7 +82,7 @@ def login_submit():
 @app.route('/')
 def home():
     if 'user_id' in session:
-      files_data = UploadFile.query.filter_by(id_user=session['user_id'])
+      files_data = UploadFile.query.filter_by(id_user=session['user_id']).order_by(UploadFile.pin_status.desc(), UploadFile.date.asc())
       return render_template('upload.html', datas = files_data)
     else:
       return redirect(url_for('login'))
@@ -99,7 +101,7 @@ def upload_file():
     file_data = UploadFile.query.filter_by(file_hash=res['Hash']).first()
     if not file_data:
       if 'user_id' in session:
-        user = UploadFile(session['user_id'], secure_filename(f.filename), date.today(), res['Hash'])
+        user = UploadFile(session['user_id'], secure_filename(f.filename), date.today(), res['Hash'], 0)
         db.session.add(user)
         db.session.commit()
       return redirect('/')
@@ -124,16 +126,22 @@ def delete_file():
 
 @app.route('/pin-file')
 def pin_file():
-    hash_file = request.args.get('hash')
-    api = ipfsApi.Client('127.0.0.1', 5001)
-    res = api.pin_add(hash_file)
+    id_file = request.args.get('file_hash')
+    file_data = UploadFile.query.filter(UploadFile.file_hash == id_file).first()
+    file_data.pin_status = 1
+    # api = ipfsApi.Client('127.0.0.1', 5001)
+    # api.pin_add(id_file[:10])
+    db.session.commit()
     return redirect('/')
 
 @app.route('/rm-pin-file')
 def rm_pin_file():
-    hash_file = request.args.get('hash')
-    api = ipfsApi.Client('127.0.0.1', 5001)
-    res = api.pin_rm(hash_file)
+    id_file = request.args.get('id')
+    # api = ipfsApi.Client('127.0.0.1')
+    # res = api.pin_add(hash_file)
+    file_data = UploadFile.query.filter(UploadFile.id == id_file).first()
+    file_data.pin_status = 0
+    db.session.commit()
     return redirect('/')
 
 @app.route('/find')

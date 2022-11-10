@@ -87,13 +87,21 @@
                 <table class="table" width="100%">
                     <tr>
                         <th>Name File</th>
+                        <th>Status</th>
                         <th>Hash</th>
                         <th>Date</th>
                         <th>Action</th>
                     </tr>
                     {% for file in datas %}
                         <tr>
-                            <td>{{file.file_name}}</td>
+                            {% if file.pin_status == 0 %}
+                                <td>{{file.file_name}}</td>
+                                <td></td>
+                            {% endif %}
+                            {% if file.pin_status == 1 %}
+                                <td>{{file.file_name}}</td>
+                                <td><img src="https://uxwing.com/wp-content/themes/uxwing/download/tools-equipment-construction/thumbtack-icon.svg" width="20" height="20"></td>
+                            {% endif %}
                             <td>{{file.file_hash}}</td>
                             <td>{{file.date}}</td>
                             <td>
@@ -109,7 +117,12 @@
                                     <form>
                                         <div class="dropdown-menu" id="dropdown-menu" role="menu">
                                             <div class="dropdown-content">
-                                                <a href="/pin-file?{{ file.hash }}" class="dropdown-item">Pin</a>
+                                                {% if file.pin_status == 0 %}
+                                                    <a href="/pin-file?file_hash={{ file.file_hash }}" class="dropdown-item">Pin</a>
+                                                {% endif %}
+                                                {% if file.pin_status == 1 %}
+                                                    <a href="/rm-pin-file?id={{ file.id }}" class="dropdown-item">UnPin</a>
+                                                {% endif %}
                                                 <a href="/edit-file?id={{ file.id }}" class="dropdown-item">Edit</a>
                                                 <hr class="navbar-divider">
                                                 <a href="/delete-file?id={{ file.id }}" class="dropdown-item">Delete</a>
