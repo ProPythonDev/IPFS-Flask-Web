@@ -1,11 +1,11 @@
 from operator import and_
 from flask import Flask
-from flask import render_template, request, redirect, session, url_for
+from flask import render_template, request, redirect, session, url_for, flash
 from sqlalchemy import ForeignKey
 from werkzeug.utils import secure_filename
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date
-import ipfsapi
+import ipfsApi
 import os
 import webbrowser
 
@@ -29,20 +29,6 @@ class User(db.Model):
     self.name=name
     self.email=email
     self.password=password
-
-# class UpdateFile(db.Model):
-#   __tablename__='upload'
-#   id=db.Column(db.Integer,primary_key=True)
-#   id_user=db.Column(db.Integer, ForeignKey(User.id))
-#   file_name=db.Column(db.String(120))
-#   date=db.Column(db.Date)
-#   file_hash=db.Column(db.String(120))
- 
-#   def __init__(self,id_user,file_name,date,file_hash):
-#     self.id_user=id_user
-#     self.file_name=file_name
-#     self.date=date
-#     self.file_hash=file_hash
 
 class UploadFile(db.Model):
   __tablename__='upload'
@@ -88,7 +74,8 @@ def login_submit():
       session['user_id'] = user.id
       return redirect('/')
     else:
-      return "gagal login"
+      flash("Gagal login\nEmail atau Password salah")
+      return redirect('/login')
 
 @app.route('/')
 def home():
@@ -107,36 +94,79 @@ def logout():
 def upload_file():
     f = request.files['file']
     f.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
-    api = ipfsapi.Client('127.0.0.1', 5001)
+    api = ipfsApi.Client('127.0.0.1', 5001)
     res = api.add(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
-    if 'user_id' in session:
-      user = UploadFile(session['user_id'], secure_filename(f.filename), date.today(), res['Hash'])
-      db.session.add(user)
-      db.session.commit()
-    return redirect('/')
+    file_data = UploadFile.query.filter_by(file_hash=res['Hash']).first()
+    if not file_data:
+      if 'user_id' in session:
+        user = UploadFile(session['user_id'], secure_filename(f.filename), date.today(), res['Hash'])
+        db.session.add(user)
+        db.session.commit()
+      return redirect('/')
+    else:
+      hash = res['Hash']
+      flash(f"{hash} sudah ada")
+      return redirect('/')
+    
+@app.route('/edit-file', methods = ['POST'])
+def edit_file():
+    id_file = request.args.get('id')
+    UploadFile.query.filter(UploadFile.id == id_file).delete()
+    db.session.commit()
+    return redirect('/')  
   
-# @app.route('/action-edit', methods = ['POST'])
-# def update_file():
-#     f = request.files['file']
-#     f.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
-#     api = ipfsApi.Client('127.0.0.1', 5001)
-#     res = api.add(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
-#     if 'user_id' in session:
-#       user = UpdateFile(session['user_id'], secure_filename(f.filename), date.today(), res['Hash'])
-#       # db.create_all()
-#       db.session.add(user)
-#       db.session.commit()
-#     return redirect('/')
+@app.route('/delete-file')
+def delete_file():
+    id_file = request.args.get('id')
+    UploadFile.query.filter(UploadFile.id == id_file).delete()
+    db.session.commit()
+    return redirect('/')
+
+@app.route('/pin-file')
+def pin_file():
+    hash_file = request.args.get('hash')
+    api = ipfsApi.Client('127.0.0.1', 5001)
+    res = api.pin_add(hash_file)
+    return redirect('/')
+
+@app.route('/rm-pin-file')
+def rm_pin_file():
+    hash_file = request.args.get('hash')
+    api = ipfsApi.Client('127.0.0.1', 5001)
+    res = api.pin_rm(hash_file)
+    return redirect('/')
 
 @app.route('/find')
 def find():
     return render_template('find.html')
+  
+@app.route('/verifier')
+def verifier():
+    return render_template('verifier.html')
 
 @app.route('/find-ipfs', methods = ['POST'])
 def find_to_ipfs():
     fileHash = request.form['text']
     webbrowser.open(f"https://ipfs.io/ipfs/{fileHash}")
     return redirect("/")
+  
+@app.route('/file-verifier', methods = ['POST'])
+def verify_file():
+    try:
+      f = request.files['file']
+      f.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
+      api = ipfsApi.Client('127.0.0.1', 5001)
+      res = api.add(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
+      file_data = UploadFile.query.filter_by(file_hash=res['Hash']).first()
+      if not file_data:
+        flash(f"file asli tidak ditemukan")  
+        return redirect('/verifier')
+      else:
+        flash(f"file asli terverifikasi")
+        return redirect('/verifier')
+    except:
+      flash(f"something wrong about the file checker")
+      return redirect('/verifier')
 
 if __name__ == '__main__':
     app.run(debug=True)

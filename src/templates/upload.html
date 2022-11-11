@@ -6,6 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload File IPFS</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class=flashes>
+        {% for message in messages %}
+        <div class="notification is-danger">
+            <a href="/" class="delete"></a>
+            {{ message }}
+        </div>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %}
+    {% block body %}{% endblock %}
 </head>
 <body>
     <nav class="navbar is-link" role="navigation" aria-label="main navigation">
@@ -25,6 +38,7 @@
             <div class="navbar-start">
                 <a href="/" class="navbar-item">Files</a>
                 <a href="/find" class="navbar-item">Search</a>
+                <a href="/verifier" class="navbar-item">File Verifier</a>
                 <div class="navbar-item has-dropdown is-hoverable">
                     <a class="navbar-link">More</a>
                     <div class="navbar-dropdown">
@@ -92,14 +106,16 @@
                                             </span>
                                         </button>
                                     </div>
-                                    <div class="dropdown-menu" id="dropdown-menu" role="menu">
-                                        <div class="dropdown-content">
-                                            <a href="#" class="dropdown-item">Pin</a>
-                                            <a href="#" class="dropdown-item">Edit</a>
-                                            <hr class="navbar-divider">
-                                            <a href="#" class="dropdown-item">Delete</a>
+                                    <form>
+                                        <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                                            <div class="dropdown-content">
+                                                <a href="/pin-file?{{ file.hash }}" class="dropdown-item">Pin</a>
+                                                <a href="/edit-file?id={{ file.id }}" class="dropdown-item">Edit</a>
+                                                <hr class="navbar-divider">
+                                                <a href="/delete-file?id={{ file.id }}" class="dropdown-item">Delete</a>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
