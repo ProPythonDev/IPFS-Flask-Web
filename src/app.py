@@ -84,7 +84,8 @@ def home():
     user_data = User.query.filter_by(id=session['user_id']).first().name
     if 'user_id' in session:
       files_data = UploadFile.query.filter_by(id_user=session['user_id']).order_by(UploadFile.pin_status.desc(), UploadFile.date.asc())
-      return render_template('upload.html', datas = files_data, filter = 2, user = user_data)
+      c = files_data.count()
+      return render_template('upload.html', datas = files_data, user = user_data, c = c)
     else:
       return redirect(url_for('login'))
     
@@ -92,22 +93,17 @@ def home():
 def filter_pin():
     user_data = User.query.filter_by(id=session['user_id']).first().name
     if 'user_id' in session:
-      files_data = UploadFile.query.filter_by(id_user=session['user_id']).order_by(UploadFile.pin_status.desc(), UploadFile.date.asc())
-    return render_template('upload.html', datas = files_data, filter = 0, user = user_data)
+      files_data = UploadFile.query.filter_by(id_user=session['user_id'], pin_status=1).order_by(UploadFile.date.asc())
+      c = files_data.count()
+    return render_template('upload.html', datas = files_data, user = user_data, c = c)
 
 @app.route('/filter-unpin')
 def filter_unpin():
     user_data = User.query.filter_by(id=session['user_id']).first().name
     if 'user_id' in session:
-      files_data = UploadFile.query.filter_by(id_user=session['user_id']).order_by(UploadFile.pin_status.desc(), UploadFile.date.asc())
-    return render_template('upload.html', datas = files_data, filter = 1, user = user_data)
-
-@app.route('/filter-all')
-def filter_all():
-    user_data = User.query.filter_by(id=session['user_id']).first().name
-    if 'user_id' in session:
-      files_data = UploadFile.query.filter_by(id_user=session['user_id']).order_by(UploadFile.pin_status.desc(), UploadFile.date.asc())
-    return render_template('upload.html', datas = files_data, filter = 2, user = user_data)
+      files_data = UploadFile.query.filter_by(id_user=session['user_id'], pin_status=0).order_by(UploadFile.date.asc())
+      c = files_data.count()
+    return render_template('upload.html', datas = files_data, user = user_data, c = c)
 
 @app.route("/logout")
 def logout():

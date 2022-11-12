@@ -44,7 +44,7 @@
                     <div class="navbar-dropdown">
                         <a href="/filter-pin" class="navbar-item">Pinned</a>
                         <a href="/filter-unpin" class="navbar-item">Unpinned</a>
-                        <a href="/filter-all" class="navbar-item">All</a>
+                        <a href="/" class="navbar-item">All</a>
                         <hr class="navbar-divider">
                         <a class="navbar-item">Report an issue</a>
                     </div>
@@ -86,8 +86,21 @@
                         <th>Date</th>
                         <th>Action</th>
                     </tr>
-                    {% for file in datas %}
-                        {% if filter == 2 %}
+                    {% if c == 0 %}
+                </table>
+                <section class="section">
+                    <div class="container">
+                    <div class="columns is-centered">
+                        <div class="column is-half">
+                        <figure>
+                            <img src="https://cdn.dribbble.com/users/760295/screenshots/4433975/media/03494b209a1511a61868ced337b97931.png?compress=1&resize=800x600&vertical=top" alt="Melton Hill Lake">
+                        </figure>
+                        </div>
+                    </div>
+                    </div>
+                </section>
+                    {% else %}
+                        {% for file in datas %}
                             <tr>
                                 {% if file.pin_status == 0 %}
                                     <td>{{file.file_name}}</td>
@@ -127,82 +140,8 @@
                                     </div>
                                 </td>
                             </tr>
-                        {% endif %}
-                        {% if filter == 0 %}
-                            <tr>
-                                {% if file.pin_status == 1 %}
-                                    <td>{{file.file_name}}</td>
-                                    <td><img src="https://uxwing.com/wp-content/themes/uxwing/download/tools-equipment-construction/thumbtack-icon.svg" width="20" height="20"></td>
-                                    <td>{{file.file_hash}}</td>
-                                    <td>{{file.date}}</td>
-                                    <td>
-                                        <div class="dropdown is-hoverable">
-                                            <div class="dropdown-trigger">
-                                                <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-                                                    <span>More</span>
-                                                    <span class="icon is-small">
-                                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
-                                                    </span>
-                                                </button>
-                                            </div>
-                                            <form>
-                                                <div class="dropdown-menu" id="dropdown-menu" role="menu">
-                                                    <div class="dropdown-content">
-                                                        {% if file.pin_status == 0 %}
-                                                            <a href="/pin-file?file_hash={{ file.file_hash }}" class="dropdown-item">Pin</a>
-                                                        {% endif %}
-                                                        {% if file.pin_status == 1 %}
-                                                            <a href="/rm-pin-file?id={{ file.id }}" class="dropdown-item">UnPin</a>
-                                                        {% endif %}
-                                                        <a href="/edit-file?id={{ file.id }}" class="dropdown-item">Edit</a>
-                                                        <hr class="navbar-divider">
-                                                        <a href="/delete-file?id={{ file.id }}" class="dropdown-item">Delete</a>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </td>
-                                {% endif %}
-                            </tr>
-                        {% endif %}
-                        {% if filter == 1 %}
-                            <tr>
-                                {% if file.pin_status == 0 %}
-                                    <td>{{file.file_name}}</td>
-                                    <td></td>
-                                    <td>{{file.file_hash}}</td>
-                                    <td>{{file.date}}</td>
-                                    <td>
-                                        <div class="dropdown is-hoverable">
-                                            <div class="dropdown-trigger">
-                                                <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-                                                    <span>More</span>
-                                                    <span class="icon is-small">
-                                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
-                                                    </span>
-                                                </button>
-                                            </div>
-                                            <form>
-                                                <div class="dropdown-menu" id="dropdown-menu" role="menu">
-                                                    <div class="dropdown-content">
-                                                        {% if file.pin_status == 0 %}
-                                                            <a href="/pin-file?file_hash={{ file.file_hash }}" class="dropdown-item">Pin</a>
-                                                        {% endif %}
-                                                        {% if file.pin_status == 1 %}
-                                                            <a href="/rm-pin-file?id={{ file.id }}" class="dropdown-item">UnPin</a>
-                                                        {% endif %}
-                                                        <a href="/edit-file?id={{ file.id }}" class="dropdown-item">Edit</a>
-                                                        <hr class="navbar-divider">
-                                                        <a href="/delete-file?id={{ file.id }}" class="dropdown-item">Delete</a>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </td>
-                                {% endif %}
-                            </tr>
-                        {% endif %}
-                    {% endfor %}
+                        {% endfor %}
+                    {% endif %}
                 </table>
             </div>
         </div>
