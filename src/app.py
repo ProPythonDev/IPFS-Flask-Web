@@ -81,12 +81,34 @@ def login_submit():
 
 @app.route('/')
 def home():
+    user_data = User.query.filter_by(id=session['user_id']).first().name
     if 'user_id' in session:
       files_data = UploadFile.query.filter_by(id_user=session['user_id']).order_by(UploadFile.pin_status.desc(), UploadFile.date.asc())
-      return render_template('upload.html', datas = files_data)
+      return render_template('upload.html', datas = files_data, filter = 2, user = user_data)
     else:
       return redirect(url_for('login'))
     
+@app.route('/filter-pin')
+def filter_pin():
+    user_data = User.query.filter_by(id=session['user_id']).first().name
+    if 'user_id' in session:
+      files_data = UploadFile.query.filter_by(id_user=session['user_id']).order_by(UploadFile.pin_status.desc(), UploadFile.date.asc())
+    return render_template('upload.html', datas = files_data, filter = 0, user = user_data)
+
+@app.route('/filter-unpin')
+def filter_unpin():
+    user_data = User.query.filter_by(id=session['user_id']).first().name
+    if 'user_id' in session:
+      files_data = UploadFile.query.filter_by(id_user=session['user_id']).order_by(UploadFile.pin_status.desc(), UploadFile.date.asc())
+    return render_template('upload.html', datas = files_data, filter = 1, user = user_data)
+
+@app.route('/filter-all')
+def filter_all():
+    user_data = User.query.filter_by(id=session['user_id']).first().name
+    if 'user_id' in session:
+      files_data = UploadFile.query.filter_by(id_user=session['user_id']).order_by(UploadFile.pin_status.desc(), UploadFile.date.asc())
+    return render_template('upload.html', datas = files_data, filter = 2, user = user_data)
+
 @app.route("/logout")
 def logout():
     session.pop("user_id", None)
