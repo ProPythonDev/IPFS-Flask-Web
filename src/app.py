@@ -81,7 +81,10 @@ def login_submit():
 
 @app.route('/')
 def home():
-    user_data = User.query.filter_by(id=session['user_id']).first().name
+    try:
+      user_data = User.query.filter_by(id=session['user_id']).first().name
+    except:
+      pass
     if 'user_id' in session:
       files_data = UploadFile.query.filter_by(id_user=session['user_id']).order_by(UploadFile.pin_status.desc(), UploadFile.date.asc())
       c = files_data.count()
@@ -184,11 +187,13 @@ def verify_file():
       api = ipfsApi.Client('127.0.0.1', 5001)
       res = api.add(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
       file_data = UploadFile.query.filter_by(file_hash=res['Hash']).first()
+      
       if not file_data:
-        flash(f"file asli tidak ditemukan")  
+        flash(f"file asli tidak ditemukan")
         return redirect('/verifier')
       else:
-        flash(f"file asli terverifikasi")
+        user_data = User.query.filter_by(id=session['user_id']).first().name
+        flash(f"file asli terverifikasi, pemilik {user_data}")
         return redirect('/verifier')
     except:
       flash(f"something wrong about the file checker")
