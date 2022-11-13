@@ -147,8 +147,8 @@ def delete_file():
 
 @app.route('/pin-file')
 def pin_file():
-    id_file = request.args.get('file_hash')
-    file_data = UploadFile.query.filter(UploadFile.file_hash == id_file).first()
+    hash_file = request.args.get('file_hash')
+    file_data = UploadFile.query.filter(UploadFile.file_hash == hash_file).first()
     file_data.pin_status = 1
     # api = ipfsApi.Client('127.0.0.1', 5001)
     # api.pin_add(id_file[:10])
@@ -157,13 +157,21 @@ def pin_file():
 
 @app.route('/rm-pin-file')
 def rm_pin_file():
-    id_file = request.args.get('id')
+    hash_file = request.args.get('file_hash')
     # api = ipfsApi.Client('127.0.0.1')
     # res = api.pin_add(hash_file)
-    file_data = UploadFile.query.filter(UploadFile.id == id_file).first()
+    file_data = UploadFile.query.filter(UploadFile.file_hash == hash_file).first()
     file_data.pin_status = 0
     db.session.commit()
     return redirect('/')
+  
+@app.route('/print-file')
+def print_file():
+    hash_file = request.args.get('file_hash')
+    file_data = UploadFile.query.filter(UploadFile.file_hash == hash_file).first().file_hash
+    qr_url = f"http://api.qrserver.com/v1/create-qr-code/?data=https://ipfs.io/ipfs/{file_data}?filename={file_data}&size=200x200"
+    doc_url = f"https://ipfs.io/ipfs/{file_data}"
+    return render_template('print.html', qr = qr_url, doc = doc_url)
 
 @app.route('/find')
 def find():
