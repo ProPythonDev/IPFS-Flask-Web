@@ -23,7 +23,7 @@
         
             <div id="navbarBasicExample" class="navbar-menu">
                 <div class="navbar-start">
-                    <a href="/" class="navbar-item">Files</a>
+                    <a href="/" class="navbar-item" >Files</a>
                     <a href="/find" class="navbar-item">Search</a>
                 </div>
         
@@ -39,17 +39,19 @@
 
         <section class="hero is-small">
             <div class="hero-body">
-                <p class="title">Search</p>
+                <p class="title" >Search</p>
                 <p class="subtitle">Input a valid CID</p>
             </div>
         </section>
 
         <div class="container is-max-widescreen">
             <div class="notification ">
-                <form action = "http://localhost:5000/find-ipfs" method = "POST" enctype = "multipart/form-data">
-                    <input class="input" type="text" name="text" placeholder="Input CIDs" width="75%">
-                    <button  type="submit" class="button">Submit</button>
-                </form>
+                <div class="box has-text-centered">
+                    <form action = "http://localhost:5000/find-ipfs" method = "POST" enctype = "multipart/form-data">
+                        <input class="input" type="text" name="text" placeholder="Input CIDs" width="75%" style="margin-bottom:20px;">
+                        <button type="submit" class="button">Submit</button>
+                    </form>
+                </div>
             </div>
         </div>
     </body>

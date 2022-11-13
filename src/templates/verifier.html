@@ -59,11 +59,22 @@
 
         <div class="container is-max-widescreen">
             <div class="notification ">
-                <form action = "http://localhost:5000/file-verifier" method = "POST" 
-                enctype = "multipart/form-data">
-                <input type = "file" name = "file" />
-                <input type = "submit"/>
-            </form>
+                <div class="box" style="margin-bottom:-5px;">
+                    <span class="subtitle">Upload softfile document</span>
+                    <form action = "http://localhost:5000/file-verifier" method = "POST" enctype = "multipart/form-data">
+                        <input type = "file" name = "file" />
+                        <input type = "submit"/>
+                    </form>
+                </div>
+                <p class="has-text-centered is-size-1" style="margin-bottom:10px;">or</p>
+                <div class="box">
+                    <span class="subtitle">Upload QR code document</span>
+                    <form enctype="multipart/form-data" action="http://api.qrserver.com/v1/read-qr-code/" method="POST">
+                        <input type="hidden" name="MAX_FILE_SIZE" value="1048576" />
+                        <input name="file" type="file" />
+                        <input type="submit" value="Read QR code" />
+                    </form>
+                </div>
             </div>
         </div>
     </body>

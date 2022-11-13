@@ -46,7 +46,7 @@
                         <a href="/filter-unpin" class="navbar-item">Unpinned</a>
                         <a href="/" class="navbar-item">All</a>
                         <hr class="navbar-divider">
-                        <a class="navbar-item">Report an issue</a>
+                        <a target="_blank" href="https://wa.me/+6282155534039/?text=there's a problem..." class="navbar-item">Report an issue</a>
                     </div>
                 </div>
             </div>
@@ -69,13 +69,14 @@
 
     <div class="container is-max-widescreen">
         <div class="notification ">
-            
-            <span class="subtitle">Upload</span>
-            <form action = "http://localhost:5000/uploader" method = "POST" 
-                enctype = "multipart/form-data">
-                <input type = "file" name = "file" />
-                <input type = "submit"/>
-            </form>
+            <div class="box">
+                <span class="subtitle">Upload</span>
+                <form action = "http://localhost:5000/uploader" method = "POST" 
+                    enctype = "multipart/form-data">
+                    <input type = "file" name = "file" />
+                    <input type = "submit"/>
+                </form>
+            </div>
             <div class="box">
                 <span class="title">Your File</span>
                 <table class="table" width="100%">
@@ -132,7 +133,7 @@
                                                         <a href="/rm-pin-file?file_hash={{ file.file_hash }}" class="dropdown-item">UnPin</a>
                                                     {% endif %}
                                                     <a href="/edit-file?id={{ file.id }}" class="dropdown-item">Edit</a>
-                                                    <a href="/print-file?file_hash={{ file.file_hash }}" class="dropdown-item">Print</a>
+                                                    <a target="_blank" href="/print-file?file_hash={{ file.file_hash }}" class="dropdown-item">Print</a>
                                                     <hr class="navbar-divider">
                                                     <a href="/delete-file?id={{ file.id }}" class="dropdown-item">Delete</a>
                                                 </div>
