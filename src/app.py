@@ -181,10 +181,21 @@ def rm_pin_file():
 @app.route('/print-file')
 def print_file():
     hash_file = request.args.get('file_hash')
-    file_data = UploadFile.query.filter(UploadFile.file_hash == hash_file).first().file_hash
-    qr_url = f"http://api.qrserver.com/v1/create-qr-code/?data=https://ipfs.io/ipfs/{file_data}?filename={file_data}&size=200x200"
-    doc_url = f"https://ipfs.io/ipfs/{file_data}"
-    return render_template('print.html', qr = qr_url, doc = doc_url)
+    if not hash_file:
+      return render_template('print.html', qr = '', doc = 'https://cdn.dribbble.com/users/760295/screenshots/4433975/media/03494b209a1511a61868ced337b97931.png?compress=1&resize=800x600&vertical=top')
+    else:
+      file_data = UploadFile.query.filter(UploadFile.file_hash == hash_file).first().file_hash
+      qr_url = f"http://api.qrserver.com/v1/create-qr-code/?data=https://ipfs.io/ipfs/{file_data}?filename={file_data}&size=200x200"
+      doc_url = f"https://ipfs.io/ipfs/{file_data}"
+      return render_template('print.html', qr = qr_url, doc = doc_url)
+  
+@app.route('/print-from-hash', methods = ['POST'])
+def print_from_hash():
+    fileHash = request.form['hash']
+    qr_url = f"http://api.qrserver.com/v1/create-qr-code/?data=https://ipfs.io/ipfs/{fileHash}?filename={fileHash}&size=200x200"
+    doc_url = f"https://ipfs.io/ipfs/{fileHash}"
+    return render_template('display.html', qr = qr_url, doc = doc_url)
+
 
 @app.route('/find')
 def find():
@@ -203,7 +214,7 @@ def find_to_ipfs():
 @app.route('/file-verifier', methods = ['POST'])
 def verify_file():
     try:
-      f = request.files['file']
+      f = request.files['file1']
       f.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
       api = ipfsApi.Client('127.0.0.1', 5001)
       res = api.add(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
