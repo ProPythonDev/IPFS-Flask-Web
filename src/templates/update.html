@@ -4,21 +4,8 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
+        <title>Find File From IPFS</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <ul class=flashes>
-                {% for message in messages %}
-                <div class="notification is-danger">
-                    <a href="/login" class="delete"></a>
-                    {{ message }}
-                </div>
-                {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
-        {% block body %}{% endblock %}
     </head>
     <body>
         <nav class="navbar is-link" role="navigation" aria-label="main navigation">
@@ -36,33 +23,40 @@
         
             <div id="navbarBasicExample" class="navbar-menu">
                 <div class="navbar-start">
-                    <a href="/register" class="navbar-item">Register</a>
-                    <a href="#" class="navbar-item">About</a>
+                    <a href="/" class="navbar-item" >Files</a>
+                    <a href="/find" class="navbar-item">Search</a>
                 </div>
+        
+                <div class="navbar-end">
+                    <div class="navbar-item">
+                        <div class="buttons">
+                            <a href="/logout" class="button is-light">Log out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </nav>
+
         <section class="hero is-small">
             <div class="hero-body">
-                <p class="title">Login</p>
-                <p class="subtitle">Untuk masuk</p>
+                <p class="title" >Update</p>
+                <p class="subtitle">edit file name</p>
             </div>
         </section>
+
         <div class="container is-max-widescreen">
             <div class="notification ">
-                <form class="box" action = "/login-submit" method = "POST">
-                    <div class="field">
-                        <label class="label">Email</label>
-                        <div class="control">
-                            <input class="input" type="text" name="email" placeholder="your email">
+                <div class="box">
+                    <form class="box" action="/edit-file/{{file_to_update.id}}" method = "POST">
+                        <div class="field">
+                            <label class="label">New name</label>
+                            <div class="control">
+                                <input class="input" type="text" name="name" value={{file_to_update.file_name}} required>
+                            </div>
                         </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Password</label>
-                        <div class="control">
-                            <input class="input" type="password" name="password" placeholder="********">
-                        </div>
-                    </div>
-                    <button class="button is-primary" type="submit">Submit</button>
-                </form>
+                        <button class="button is-primary" type="submit">Save</button>
+                    </form>
+                </div>
             </div>
         </div>
     </body>

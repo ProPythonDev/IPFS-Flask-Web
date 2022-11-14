@@ -131,12 +131,25 @@ def upload_file():
       flash(f"{hash} sudah ada")
       return redirect('/')
     
-@app.route('/edit-file', methods = ['POST'])
-def edit_file():
-    id_file = request.args.get('id')
-    UploadFile.query.filter(UploadFile.id == id_file).delete()
-    db.session.commit()
-    return redirect('/')  
+@app.route('/update/<int:id>', methods = ['POST', 'GET'])
+def update(id):
+    # id_file = request.args.get('id')
+    file_to_update = UploadFile.query.get_or_404(id)
+    return render_template('update.html', file_to_update=file_to_update)
+      
+@app.route('/edit-file/<int:id>', methods = ['POST', 'GET'])
+def edit_file(id):
+    file_to_update = UploadFile.query.get_or_404(id)
+    if request.method == "POST":
+      file_to_update.file_name = request.form['name']
+      file_to_update.date = date.today()
+      try:
+        db.session.commit()
+        return redirect('/')
+      except:
+        return "There was problem"
+    else:
+        return render_template('update.html', file_to_update=file_to_update)
   
 @app.route('/delete-file')
 def delete_file():
