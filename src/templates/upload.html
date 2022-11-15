@@ -5,10 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload File IPFS</title>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js" integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     {% with messages = get_flashed_messages() %}
     {% if messages %}
@@ -45,7 +41,7 @@
                 <a href="/verifier" class="navbar-item">File Verifier</a>
                 <a href="/print-file?" class="navbar-item">Print</a>
                 <div class="navbar-item has-dropdown is-hoverable">
-                    <a class="navbar-link">More</a>
+                    <a class="navbar-link">Filter</a>
                     <div class="navbar-dropdown">
                         <a href="/filter-pin" class="navbar-item">Pinned</a>
                         <a href="/filter-unpin" class="navbar-item">Unpinned</a>
@@ -138,7 +134,7 @@
                                                         <a href="/rm-pin-file?file_hash={{ file.file_hash }}" class="dropdown-item">UnPin</a>
                                                     {% endif %}
                                                     <a href="update/{{file.id}}" class="dropdown-item">Edit</a>
-                                                    <a target="_blank" href="/print-file?file_hash={{ file.file_hash }}" class="dropdown-item">Print</a>
+                                                    <a target="_blank" href="/direct-print?file_hash={{ file.file_hash }}" class="dropdown-item">Print</a>
                                                     <hr class="navbar-divider">
                                                     <a href="/delete-file?id={{ file.id }}" class="dropdown-item">Delete</a>
                                                 </div>
