@@ -134,7 +134,7 @@
                                                         <a href="/rm-pin-file?file_hash={{ file.file_hash }}" class="dropdown-item">Unpin</a>
                                                     {% endif %}
                                                     <a href="update/{{file.id}}" class="dropdown-item">Edit</a>
-                                                    <a onclick="copyText('{{file.id}}')" class="dropdown-item">Share CIDs</a>
+                                                    <a onclick="copyText('{{file.file_hash}}')" class="dropdown-item">Share CIDs</a>
                                                     <a target="_blank" href="/direct-print?file_hash={{ file.file_hash }}" class="dropdown-item">Print</a>
                                                     <hr class="navbar-divider">
                                                     <a href="/delete-file?id={{ file.id }}" class="dropdown-item">Delete</a>
