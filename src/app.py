@@ -1,6 +1,6 @@
 from operator import and_
 from flask import Flask
-from flask import render_template, request, redirect, session, url_for, flash
+from flask import render_template, request, redirect, session, url_for, flash, make_response
 from sqlalchemy import ForeignKey, desc, asc
 from werkzeug.utils import secure_filename
 from flask_sqlalchemy import SQLAlchemy
@@ -8,12 +8,13 @@ from datetime import date
 import ipfsApi
 import os
 import webbrowser
+import pdfkit
 
 UPLOAD_FOLDER = r'static\uploads'
 
 app = Flask(__name__)
 app.secret_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c2VyLTFTTTRSUTlfLS1IVEpGM0QiLCJpYXQiOjE2NjI5ODc0Nzd9.mCvSd2o2vw5Gs7grkBLkW75dlgVcJ-aiqMzfVUvG-q4'
-app.config['SQLALCHEMY_DATABASE_URI']='postgresql://kevin:123456@localhost/flask_db'
+app.config['SQLALCHEMY_DATABASE_URI']='postgresql://Asus:admin@localhost/flask_db'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 db = SQLAlchemy(app)
@@ -57,7 +58,7 @@ def register_submit():
     password = request.form['password']
 
     user = User(name, email, password)
-    # db.create_all()
+    db.create_all()
     db.session.add(user)
     db.session.commit()
     return redirect(url_for('login'))
@@ -189,13 +190,23 @@ def print_from_hash():
     doc_url = f"https://ipfs.io/ipfs/{fileHash}"
     return render_template('display.html', qr = qr_url, doc = doc_url)
     
-@app.route('/direct-print')
+@app.route('/direct-print', methods = ['POST'])
 def direct_print():
-    hash_file = request.args.get('file_hash')
-    file_data = UploadFile.query.filter(UploadFile.file_hash == hash_file).first().file_hash
-    qr_url = f"http://api.qrserver.com/v1/create-qr-code/?data=https://ipfs.io/ipfs/{file_data}?filename={file_data}&size=200x200"
-    doc_url = f"https://ipfs.io/ipfs/{file_data}"
-    return render_template('display.html', qr = qr_url, doc = doc_url)
+    # hash_file = request.args.get('file_hash')
+    # file_data = UploadFile.query.filter(UploadFile.file_hash == hash_file).first().file_hash
+    # qr_url = f"http://api.qrserver.com/v1/create-qr-code/?data=https://ipfs.io/ipfs/{file_data}?filename={file_data}&size=200x200"
+    # doc_url = f"https://ipfs.io/ipfs/{file_data}"
+    # rendered = render_template('file.html')
+    # path_wkhtmltopdf = r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
+    # config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
+    # pdf = pdfkit.from_string(rendered, configuration=config)
+    # response = make_response(pdf)
+    # response.headers['Content-Type'] = 'application/pdf'
+    # response.headers['Content-Disposition'] = 'inline; filename=output.pdf'
+    fileHash = request.form['hash']
+    doc_url = f"https://ipfs.io/ipfs/{fileHash}"
+    qr_url = f"http://api.qrserver.com/v1/create-qr-code/?data=https://ipfs.io/ipfs/{fileHash}?filename={fileHash}&size=200x200"
+    return render_template('file.html', qr = qr_url, doc = doc_url)
 
 
 @app.route('/find')
