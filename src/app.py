@@ -14,8 +14,8 @@ UPLOAD_FOLDER = r'static\uploads'
 
 app = Flask(__name__)
 app.secret_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c2VyLTFTTTRSUTlfLS1IVEpGM0QiLCJpYXQiOjE2NjI5ODc0Nzd9.mCvSd2o2vw5Gs7grkBLkW75dlgVcJ-aiqMzfVUvG-q4'
-# app.config['SQLALCHEMY_DATABASE_URI']='postgresql://Asus:admin@localhost/flask_db'
-app.config['SQLALCHEMY_DATABASE_URI']='postgresql://kevin:123456@localhost/flask_db'
+app.config['SQLALCHEMY_DATABASE_URI']='postgresql://Asus:admin@localhost/flask_db'
+# app.config['SQLALCHEMY_DATABASE_URI']='postgresql://kevin:123456@localhost/flask_db'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 db = SQLAlchemy(app)
@@ -197,18 +197,18 @@ def direct_print():
     # file_data = UploadFile.query.filter(UploadFile.file_hash == hash_file).first().file_hash
     # qr_url = f"http://api.qrserver.com/v1/create-qr-code/?data=https://ipfs.io/ipfs/{file_data}?filename={file_data}&size=200x200"
     # doc_url = f"https://ipfs.io/ipfs/{file_data}"
-    # rendered = render_template('file.html')
-    # path_wkhtmltopdf = r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
-    # config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
-    # pdf = pdfkit.from_string(rendered, configuration=config)
-    # response = make_response(pdf)
-    # response.headers['Content-Type'] = 'application/pdf'
-    # response.headers['Content-Disposition'] = 'inline; filename=output.pdf'
-    hash_file = request.args.get('file_hash')
-    file_data = UploadFile.query.filter(UploadFile.file_hash == hash_file).first().file_hash
-    qr_url = f"http://api.qrserver.com/v1/create-qr-code/?data=https://ipfs.io/ipfs/{file_data}?filename={file_data}&size=200x200"
-    doc_url = f"https://ipfs.io/ipfs/{file_data}"
-    return render_template('file.html', qr = qr_url, doc = doc_url)
+    # hash_file = request.args.get('file_hash')
+    # file_data = UploadFile.query.filter(UploadFile.file_hash == hash_file).first().file_hash
+    qr_url = f"http://api.qrserver.com/v1/create-qr-code/?data=https://ipfs.io/ipfs/QmZtgAsCb8Dy4zvj36PBikaiPTGzKf29ykptbQdyyeD3Fi?filename=QmZtgAsCb8Dy4zvj36PBikaiPTGzKf29ykptbQdyyeD3Fi&size=200x200"
+    doc_url = f"https://ipfs.io/ipfs/QmZtgAsCb8Dy4zvj36PBikaiPTGzKf29ykptbQdyyeD3Fi"
+    rendered = render_template('file.html', qr = qr_url, doc = doc_url)
+    path_wkhtmltopdf = r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
+    config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
+    pdf = pdfkit.from_string(rendered, configuration=config)
+    response = make_response(pdf)
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = 'inline; filename=output.pdf'
+    return response
 
 @app.route('/find')
 def find():
