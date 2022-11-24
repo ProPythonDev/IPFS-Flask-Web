@@ -189,9 +189,9 @@ def print_from_hash():
     fileHash = request.form['hash']
     qr_url = f"http://api.qrserver.com/v1/create-qr-code/?data=https://ipfs.io/ipfs/{fileHash}?filename={fileHash}&size=200x200"
     doc_url = f"https://ipfs.io/ipfs/{fileHash}"
-    return render_template('display.html', qr = qr_url, doc = doc_url)
+    return render_template('file.html', qr = qr_url, doc = doc_url)
     
-@app.route('/direct-print', methods = ['POST'])
+@app.route('/direct-print')
 def direct_print():
     # hash_file = request.args.get('file_hash')
     # file_data = UploadFile.query.filter(UploadFile.file_hash == hash_file).first().file_hash
@@ -204,9 +204,10 @@ def direct_print():
     # response = make_response(pdf)
     # response.headers['Content-Type'] = 'application/pdf'
     # response.headers['Content-Disposition'] = 'inline; filename=output.pdf'
-    fileHash = request.form['hash']
-    doc_url = f"https://ipfs.io/ipfs/{fileHash}"
-    qr_url = f"http://api.qrserver.com/v1/create-qr-code/?data=https://ipfs.io/ipfs/{fileHash}?filename={fileHash}&size=200x200"
+    hash_file = request.args.get('file_hash')
+    file_data = UploadFile.query.filter(UploadFile.file_hash == hash_file).first().file_hash
+    qr_url = f"http://api.qrserver.com/v1/create-qr-code/?data=https://ipfs.io/ipfs/{file_data}?filename={file_data}&size=200x200"
+    doc_url = f"https://ipfs.io/ipfs/{file_data}"
     return render_template('file.html', qr = qr_url, doc = doc_url)
 
 @app.route('/find')
