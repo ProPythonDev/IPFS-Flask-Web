@@ -27,14 +27,14 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Ipfs-logo-1024-ice-text.png/120px-Ipfs-logo-1024-ice-text.png?20180220024806" width="30" height="40">
                 </a>
             
-                <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar1">
                     <span aria-hidden="true"></span>
                     <span aria-hidden="true"></span>
                     <span aria-hidden="true"></span>
                 </a>
             </div>
         
-            <div id="navbarBasicExample" class="navbar-menu">
+            <div id="navbar1" class="navbar-menu">
                 <div class="navbar-start">
                     <a href="/" class="navbar-item">Files</a>
                     <a href="/find" class="navbar-item">Search</a>
@@ -64,8 +64,8 @@
                 <div class="box" style="margin-bottom:-5px;">
                     <span class="subtitle">Upload softfile document</span>
                     <form action = "http://localhost:5000/file-verifier" method = "POST" enctype = "multipart/form-data">
-                        <input type = "file" name = "file1" />
-                        <input type = "submit"/>
+                        <input class="button is-medium" type = "file" name = "file1" />
+                        <input class="button is-pulled-right is-medium" type = "submit"/>
                     </form>
                 </div>
                 <p class="has-text-centered is-size-1" style="margin-bottom:10px;">or</p>
@@ -73,8 +73,8 @@
                     <span class="subtitle">Upload QR code document</span>
                     <form enctype="multipart/form-data" action="http://api.qrserver.com/v1/read-qr-code/" method="POST">
                         <input type="hidden" name="MAX_FILE_SIZE" value="1048576" />
-                        <input name="file2" type="file" />
-                        <input type="submit" value="Read QR code" />
+                        <input class="button is-medium" name="file2" type="file" />
+                        <input class="button is-pulled-right is-medium" type="submit" value="Read QR code" />
                     </form>
                 </div>
             </div>

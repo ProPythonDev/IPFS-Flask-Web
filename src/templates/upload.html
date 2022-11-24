@@ -27,14 +27,14 @@
             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Ipfs-logo-1024-ice-text.png/120px-Ipfs-logo-1024-ice-text.png?20180220024806" width="30" height="40">
           </a>
       
-          <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+          <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar1">
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
           </a>
         </div>
       
-        <div id="navbarBasicExample" class="navbar-menu">
+        <div id="navbar1" class="navbar-menu">
             <div class="navbar-start">
                 <a href="/" class="navbar-item">Files</a>
                 <a href="/find" class="navbar-item">Search</a>
@@ -63,8 +63,8 @@
 
     <section class="hero is-small">
         <div class="hero-body">
-          <p class="title">Hello {{user}}</p>
-          <p class="subtitle">Have a good day</p>
+            <p class="title">Hello {{user}}</p>
+            <p class="subtitle">Have a good day</p>
         </div>
     </section>
 
@@ -74,8 +74,8 @@
                 <span class="subtitle">Upload</span>
                 <form action = "http://localhost:5000/uploader" method = "POST" 
                     enctype = "multipart/form-data">
-                    <input type = "file" name = "file" />
-                    <input type = "submit"/>
+                    <input class="button is-medium" type="file" name="file" />
+                    <input class="button is-pulled-right is-medium" type="submit"/>
                 </form>
             </div>
             <div class="box">
@@ -90,17 +90,17 @@
                     </tr>
                     {% if c == 0 %}
                 </table>
-                <section class="section">
-                    <div class="container">
-                    <div class="columns is-centered">
-                        <div class="column is-half">
-                        <figure>
-                            <img src="https://cdn.dribbble.com/users/760295/screenshots/4433975/media/03494b209a1511a61868ced337b97931.png?compress=1&resize=800x600&vertical=top" alt="Melton Hill Lake">
-                        </figure>
+                    <section class="section">
+                        <div class="container">
+                        <div class="columns is-centered">
+                            <div class="column is-half">
+                            <figure>
+                                <img src="https://cdn.dribbble.com/users/760295/screenshots/4433975/media/03494b209a1511a61868ced337b97931.png?compress=1&resize=800x600&vertical=top" alt="Melton Hill Lake">
+                            </figure>
+                            </div>
                         </div>
-                    </div>
-                    </div>
-                </section>
+                        </div>
+                    </section>
                     {% else %}
                         {% for file in datas %}
                             <tr>
@@ -134,7 +134,7 @@
                                                         <a href="/rm-pin-file?file_hash={{ file.file_hash }}" class="dropdown-item">Unpin</a>
                                                     {% endif %}
                                                     <a href="update/{{file.id}}" class="dropdown-item">Edit</a>
-                                                    <a onclick="copyText('h{{file.id}}')" class="dropdown-item">Share CIDs</a>
+                                                    <a onclick="copyText('{{file.id}}')" class="dropdown-item">Share CIDs</a>
                                                     <a target="_blank" href="/direct-print?file_hash={{ file.file_hash }}" class="dropdown-item">Print</a>
                                                     <hr class="navbar-divider">
                                                     <a href="/delete-file?id={{ file.id }}" class="dropdown-item">Delete</a>
@@ -147,10 +147,11 @@
                         {% endfor %}
                     {% endif %}
                 </table>
-                </div>
             </div>
         </div>
     </div>
-    
 </body>
+<script>function copyText(hash) {
+    navigator.clipboard.writeText("https://ipfs.io/ipfs/" + hash);
+}</script>
 </html>
