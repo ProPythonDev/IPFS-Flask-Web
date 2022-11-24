@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
+        <title>Find File From IPFS</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     </head>
     <body>
@@ -20,43 +20,45 @@
                     <span aria-hidden="true"></span>
                 </a>
             </div>
-          
+        
             <div id="navbarBasicExample" class="navbar-menu">
                 <div class="navbar-start">
-                    <a href="/login" class="navbar-item">Login</a>
-                    <a target="_blank" href="https://wa.me/+6282155534039/?text=there's a problem..." class="navbar-item">Report an issue</a>
+                    <a href="/" class="navbar-item" >Files</a>
+                    <a href="/find" class="navbar-item">Search</a>
+                    <a href="/verifier" class="navbar-item">File Verifier</a>
+                    <a href="/print-file?" class="navbar-item">Print</a>
                 </div>
+        
+                <div class="navbar-end">
+                    <div class="navbar-item">
+                        <div class="buttons">
+                            <a href="/logout" class="button is-light">Log out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </nav>
+
         <section class="hero is-small">
             <div class="hero-body">
-                <p class="title">Register</p>
-                <p class="subtitle">Membuat akun baru</p>
+                <p class="title" >Update</p>
+                <p class="subtitle">edit file name</p>
             </div>
         </section>
+
         <div class="container is-max-widescreen">
             <div class="notification ">
-                <form class="box" action = "/register-submit" method = "POST">
-                    <div class="field">
-                        <label class="label">Name</label>
-                        <div class="control">
-                            <input class="input" type="text" name="name" placeholder="your name">
+                <div class="box">
+                    <form class="box" action="/edit-file/{{file_to_update.id}}" method = "POST">
+                        <div class="field">
+                            <label class="label">New name</label>
+                            <div class="control">
+                                <input class="input" type="text" name="name" value={{file_to_update.file_name}} required>
+                            </div>
                         </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Email</label>
-                        <div class="control">
-                            <input class="input" type="text" name="email" placeholder="your email">
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Password</label>
-                        <div class="control">
-                            <input class="input" type="text" name="password" placeholder="********">
-                        </div>
-                    </div>
-                
-                    <button class="button is-primary" type="submit">Register</button>
-                </form>
+                        <button class="button is-primary" type="submit">Save</button>
+                    </form>
+                </div>
             </div>
         </div>
     </body>

@@ -1,7 +1,7 @@
 from operator import and_
 from flask import Flask
 from flask import render_template, request, redirect, session, url_for, flash
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, desc, asc
 from werkzeug.utils import secure_filename
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date
@@ -37,12 +37,14 @@ class UploadFile(db.Model):
   file_name=db.Column(db.String(120))
   date=db.Column(db.Date)
   file_hash=db.Column(db.String(120))
+  pin_status=db.Column(db.Integer)
  
-  def __init__(self,id_user,file_name,date,file_hash):
+  def __init__(self,id_user,file_name,date,file_hash,pin_status):
     self.id_user=id_user
     self.file_name=file_name
     self.date=date
     self.file_hash=file_hash
+    self.pin_status=pin_status
 
 @app.route('/register')
 def register():
@@ -79,12 +81,33 @@ def login_submit():
 
 @app.route('/')
 def home():
+    try:
+      user_data = User.query.filter_by(id=session['user_id']).first().name
+    except:
+      pass
     if 'user_id' in session:
-      files_data = UploadFile.query.filter_by(id_user=session['user_id'])
-      return render_template('upload.html', datas = files_data)
+      files_data = UploadFile.query.filter_by(id_user=session['user_id']).order_by(UploadFile.pin_status.desc(), UploadFile.date.asc())
+      c = files_data.count()
+      return render_template('upload.html', datas = files_data, user = user_data, c = c)
     else:
       return redirect(url_for('login'))
     
+@app.route('/filter-pin')
+def filter_pin():
+    user_data = User.query.filter_by(id=session['user_id']).first().name
+    if 'user_id' in session:
+      files_data = UploadFile.query.filter_by(id_user=session['user_id'], pin_status=1).order_by(UploadFile.date.asc())
+      c = files_data.count()
+    return render_template('upload.html', datas = files_data, user = user_data, c = c)
+
+@app.route('/filter-unpin')
+def filter_unpin():
+    user_data = User.query.filter_by(id=session['user_id']).first().name
+    if 'user_id' in session:
+      files_data = UploadFile.query.filter_by(id_user=session['user_id'], pin_status=0).order_by(UploadFile.date.asc())
+      c = files_data.count()
+    return render_template('upload.html', datas = files_data, user = user_data, c = c)
+
 @app.route("/logout")
 def logout():
     session.pop("user_id", None)
@@ -99,7 +122,7 @@ def upload_file():
     file_data = UploadFile.query.filter_by(file_hash=res['Hash']).first()
     if not file_data:
       if 'user_id' in session:
-        user = UploadFile(session['user_id'], secure_filename(f.filename), date.today(), res['Hash'])
+        user = UploadFile(session['user_id'], secure_filename(f.filename), date.today(), res['Hash'], 0)
         db.session.add(user)
         db.session.commit()
       return redirect('/')
@@ -108,12 +131,25 @@ def upload_file():
       flash(f"{hash} sudah ada")
       return redirect('/')
     
-@app.route('/edit-file', methods = ['POST'])
-def edit_file():
-    id_file = request.args.get('id')
-    UploadFile.query.filter(UploadFile.id == id_file).delete()
-    db.session.commit()
-    return redirect('/')  
+@app.route('/update/<int:id>', methods = ['POST', 'GET'])
+def update(id):
+    # id_file = request.args.get('id')
+    file_to_update = UploadFile.query.get_or_404(id)
+    return render_template('update.html', file_to_update=file_to_update)
+      
+@app.route('/edit-file/<int:id>', methods = ['POST', 'GET'])
+def edit_file(id):
+    file_to_update = UploadFile.query.get_or_404(id)
+    if request.method == "POST":
+      file_to_update.file_name = request.form['name']
+      file_to_update.date = date.today()
+      try:
+        db.session.commit()
+        return redirect('/')
+      except:
+        return "There was problem"
+    else:
+        return render_template('update.html', file_to_update=file_to_update)
   
 @app.route('/delete-file')
 def delete_file():
@@ -124,17 +160,43 @@ def delete_file():
 
 @app.route('/pin-file')
 def pin_file():
-    hash_file = request.args.get('hash')
-    api = ipfsApi.Client('127.0.0.1', 5001)
-    res = api.pin_add(hash_file)
+    hash_file = request.args.get('file_hash')
+    file_data = UploadFile.query.filter(UploadFile.file_hash == hash_file).first()
+    file_data.pin_status = 1
+    # api = ipfsApi.Client('127.0.0.1', 5001)
+    # api.pin_add(id_file[:10])
+    db.session.commit()
     return redirect('/')
 
 @app.route('/rm-pin-file')
 def rm_pin_file():
-    hash_file = request.args.get('hash')
-    api = ipfsApi.Client('127.0.0.1', 5001)
-    res = api.pin_rm(hash_file)
+    hash_file = request.args.get('file_hash')
+    # api = ipfsApi.Client('127.0.0.1')
+    # res = api.pin_add(hash_file)
+    file_data = UploadFile.query.filter(UploadFile.file_hash == hash_file).first()
+    file_data.pin_status = 0
+    db.session.commit()
     return redirect('/')
+  
+@app.route('/print-file')
+def print_file():
+    return render_template('print.html')
+  
+@app.route('/print-from-hash', methods = ['POST'])
+def print_from_hash():
+    fileHash = request.form['hash']
+    qr_url = f"http://api.qrserver.com/v1/create-qr-code/?data=https://ipfs.io/ipfs/{fileHash}?filename={fileHash}&size=200x200"
+    doc_url = f"https://ipfs.io/ipfs/{fileHash}"
+    return render_template('display.html', qr = qr_url, doc = doc_url)
+    
+@app.route('/direct-print')
+def direct_print():
+    hash_file = request.args.get('file_hash')
+    file_data = UploadFile.query.filter(UploadFile.file_hash == hash_file).first().file_hash
+    qr_url = f"http://api.qrserver.com/v1/create-qr-code/?data=https://ipfs.io/ipfs/{file_data}?filename={file_data}&size=200x200"
+    doc_url = f"https://ipfs.io/ipfs/{file_data}"
+    return render_template('display.html', qr = qr_url, doc = doc_url)
+
 
 @app.route('/find')
 def find():
@@ -153,16 +215,18 @@ def find_to_ipfs():
 @app.route('/file-verifier', methods = ['POST'])
 def verify_file():
     try:
-      f = request.files['file']
+      f = request.files['file1']
       f.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
       api = ipfsApi.Client('127.0.0.1', 5001)
       res = api.add(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
       file_data = UploadFile.query.filter_by(file_hash=res['Hash']).first()
+      
       if not file_data:
-        flash(f"file asli tidak ditemukan")  
+        flash(f"file asli tidak ditemukan")
         return redirect('/verifier')
       else:
-        flash(f"file asli terverifikasi")
+        user_data = User.query.filter_by(id=session['user_id']).first().name
+        flash(f"file asli terverifikasi, pemilik {user_data}")
         return redirect('/verifier')
     except:
       flash(f"something wrong about the file checker")
