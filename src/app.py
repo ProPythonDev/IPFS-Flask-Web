@@ -199,16 +199,16 @@ def direct_print():
     # doc_url = f"https://ipfs.io/ipfs/{file_data}"
     # hash_file = request.args.get('file_hash')
     # file_data = UploadFile.query.filter(UploadFile.file_hash == hash_file).first().file_hash
-    qr_url = f"http://api.qrserver.com/v1/create-qr-code/?data=https://ipfs.io/ipfs/QmZtgAsCb8Dy4zvj36PBikaiPTGzKf29ykptbQdyyeD3Fi?filename=QmZtgAsCb8Dy4zvj36PBikaiPTGzKf29ykptbQdyyeD3Fi&size=200x200"
-    doc_url = f"https://ipfs.io/ipfs/QmZtgAsCb8Dy4zvj36PBikaiPTGzKf29ykptbQdyyeD3Fi"
-    rendered = render_template('file.html', qr = qr_url, doc = doc_url)
-    path_wkhtmltopdf = r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
-    config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
-    pdf = pdfkit.from_string(rendered, configuration=config)
-    response = make_response(pdf)
-    response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = 'inline; filename=output.pdf'
-    return response
+    qr_url = f"http://api.qrserver.com/v1/create-qr-code/?data=https://ipfs.io/ipfs/QmauYxe2pwhiRShKkW4GdzN9498FpePAWEimPK5v3tVPY5?filename=QmauYxe2pwhiRShKkW4GdzN9498FpePAWEimPK5v3tVPY5&size=200x200"
+    doc_url = f"https://ipfs.io/ipfs/QmauYxe2pwhiRShKkW4GdzN9498FpePAWEimPK5v3tVPY5"
+    # rendered = render_template('file.html', qr = qr_url, doc = doc_url)
+    # path_wkhtmltopdf = r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
+    # config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
+    # pdf = pdfkit.from_string(rendered, configuration=config)
+    # response = make_response(pdf)
+    # response.headers['Content-Type'] = 'application/pdf'
+    # response.headers['Content-Disposition'] = 'inline; filename=output.pdf'
+    return render_template('file.html', qr = qr_url, doc = doc_url)
 
 @app.route('/find')
 def find():
@@ -237,8 +237,11 @@ def verify_file():
         flash(f"file asli tidak ditemukan")
         return redirect('/verifier')
       else:
+        # tgl = UploadFile.query.filter_by(file_hash=res['Hash']).first().date
+        tgl = file_data.date
+        nfile = file_data.file_name
         user_data = User.query.filter_by(id=session['user_id']).first().name
-        flash(f"file asli terverifikasi, pemilik {user_data}")
+        flash(f"file asli terverifikasi!, , file name: {nfile}, pemilik: {user_data}, tanggal upload: {tgl}")
         return redirect('/verifier')
     except:
       flash(f"something wrong about the file checker")
