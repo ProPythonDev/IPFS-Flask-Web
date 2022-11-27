@@ -47,7 +47,7 @@
                 <div class="navbar-end">
                     <div class="navbar-item">
                         <div class="buttons">
-                            <a href="/logout" class="button is-light">Log out</a>
+                            <a href="/logout" class="button is-light" onclick="preventBack()">Log out</a>
                         </div>
                     </div>
                 </div>
@@ -154,6 +154,9 @@
         function copyText(hash) {
             navigator.clipboard.writeText("https://ipfs.io/ipfs/" + hash);
         }
+        function preventBack(){window.history.forward();}
+            setTimeout("preventBack()", 0);
+            window.onunload=function(){null};
     </script>
 </html>
 

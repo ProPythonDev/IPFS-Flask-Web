@@ -59,7 +59,7 @@
                 <div class="navbar-end">
                     <div class="navbar-item">
                         <div class="buttons">
-                            <a href="/logout" class="button is-light">Log out</a>
+                            <a href="/logout" class="button is-light" onclick="preventback()">Log out</a>
                         </div>
                     </div>
                 </div>
@@ -167,10 +167,10 @@
             document.getElementById("button2").disabled = false;
 
         }
-        function disableButton2() {
-            document.getElementById("button2").classList.add("is-danger")
-            document.getElementById("button2").disabled = true;
-        }
+
+        function preventBack(){window.history.forward();}
+            setTimeout("preventBack()", 0);
+            window.onunload=function(){null};
 
     </script>
 </html>

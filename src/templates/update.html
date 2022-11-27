@@ -32,7 +32,7 @@
                 <div class="navbar-end">
                     <div class="navbar-item">
                         <div class="buttons">
-                            <a href="/logout" class="button is-light">Log out</a>
+                            <a href="/logout" class="button is-light" onclick="preventback()">Log out</a>
                         </div>
                     </div>
                 </div>
@@ -69,4 +69,9 @@
             </div>
         </footer>
     </body>
+    <script>
+        function preventBack(){window.history.forward();}
+            setTimeout("preventBack()", 0);
+            window.onunload=function(){null};
+    </script>
 </html>

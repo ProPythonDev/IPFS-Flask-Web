@@ -124,7 +124,7 @@ def upload_file():
     file_data = UploadFile.query.filter_by(file_hash=res['Hash']).first()
     if not file_data:
       if 'user_id' in session:
-        user = UploadFile(session['user_id'], secure_filename(f.filename), date.today(), res['Hash'], 0)
+        user = UploadFile(session['user_id'], secure_filename(f.filename), date.today(), res['Hash'], 1)
         db.session.add(user)
         db.session.commit()
       return redirect('/')
@@ -173,8 +173,8 @@ def pin_file():
 @app.route('/rm-pin-file')
 def rm_pin_file():
     hash_file = request.args.get('file_hash')
-    # api = ipfsApi.Client('127.0.0.1')
-    # res = api.pin_add(hash_file)
+    api = ipfsApi.Client('127.0.0.1', 5001)
+    # api.pin_rm(hash_file)
     file_data = UploadFile.query.filter(UploadFile.file_hash == hash_file).first()
     file_data.pin_status = 0
     db.session.commit()
